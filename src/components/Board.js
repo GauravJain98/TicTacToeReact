@@ -12,6 +12,7 @@ export default class Board extends React.Component {
       isPlayerX: true, // true is X false is O
     };
   }
+
   winner(square, pt) {
     let i;
     let flag;
@@ -60,8 +61,9 @@ export default class Board extends React.Component {
 
     return null;
   }
+
   handleSquareClick(i) {
-    if (this.state.square[i] === null) {
+    if (this.state.winner === null && this.state.square[i] === null) {
       const square = this.state.square.slice();
       square[i] = this.state.isPlayerX ? "X" : "O";
       let status;
@@ -78,13 +80,16 @@ export default class Board extends React.Component {
         isPlayerX: !this.state.isPlayerX,
         status: status,
         error: null,
+        winner: winner,
+        stepNumber: this.state.stepNumber + 1,
       });
     } else {
       this.setState({
-        error: "Choose another Square",
+        error: this.state.winner === null ? "Choose another Square" : "",
       });
     }
   }
+
   renderSquare(i) {
     return (
       <Square
@@ -96,23 +101,27 @@ export default class Board extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="status">{this.state.status}</div>
-        <div className="status">{this.state.error}</div>
-        <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+      <div className="game">
+        <div className="game-board">
+          <div className="board-row">
+            {this.renderSquare(0)}
+            {this.renderSquare(1)}
+            {this.renderSquare(2)}
+          </div>
+          <div className="board-row">
+            {this.renderSquare(3)}
+            {this.renderSquare(4)}
+            {this.renderSquare(5)}
+          </div>
+          <div className="board-row">
+            {this.renderSquare(6)}
+            {this.renderSquare(7)}
+            {this.renderSquare(8)}
+          </div>
         </div>
-        <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
+        <div className="game-info">
+          <div className="status">{this.state.status}</div>
+          <div className="status">{this.state.error}</div>
         </div>
       </div>
     );
