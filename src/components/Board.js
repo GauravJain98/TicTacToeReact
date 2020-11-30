@@ -10,6 +10,8 @@ export default class Board extends React.Component {
       status: "Next player: X",
       square: Array(9).fill(null),
       isPlayerX: true, // true is X false is O
+      history: [Array(9).fill(null)],
+      stepNumber: 0,
     };
   }
 
@@ -76,12 +78,17 @@ export default class Board extends React.Component {
       } else {
         status = "Winner is " + square[i];
       }
+      let history = this.state.history.slice(0, this.state.stepNumber + 1);
+      console.log(history);
+      console.log(square);
+      history.push(square);
       this.setState({
         isPlayerX: !this.state.isPlayerX,
         status: status,
         error: null,
         winner: winner,
         stepNumber: this.state.stepNumber + 1,
+        history: history,
       });
     } else {
       this.setState({
@@ -99,7 +106,26 @@ export default class Board extends React.Component {
     );
   }
 
+  jumpTo(i) {
+    this.setState({
+      stepNumber: i,
+      isPlayerX: i % 2 === 0,
+      square: this.state.history[i],
+    });
+    this.render();
+  }
+
   render() {
+    const moves = this.state.history.map((step, move) => {
+      const desc = move ? "Go to move #" + move : "Go to game start";
+      return (
+        <li>
+          {" "}
+          <button onClick={() => this.jumpTo(move)}>{desc}</button>{" "}
+        </li>
+      );
+    });
+
     return (
       <div className="game">
         <div className="game-board">
@@ -122,6 +148,9 @@ export default class Board extends React.Component {
         <div className="game-info">
           <div className="status">{this.state.status}</div>
           <div className="status">{this.state.error}</div>
+          <div className="status">
+            <ol>{moves}</ol>
+          </div>
         </div>
       </div>
     );
